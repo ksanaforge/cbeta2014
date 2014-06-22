@@ -1,0 +1,11 @@
+{
+  "name":"ccc"
+  ,"author":"yapcheahshen"
+  ,"template":"classical"
+  ,"desc":"Chinese Classical"
+  ,"ydbmeta":{
+  	"config":"simple1"
+  	,"outputencoding":"ucs2"
+  	,"estimatesize":16777216
+  }
+}

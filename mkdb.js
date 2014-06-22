@@ -7,6 +7,13 @@ var afterbodyend=function(s,status) {
 	console.log("end",s.length);
 }
 
+var onFile=function(fn) {
+	console.log("indexing",fn)
+}
+/*
+  output filename
+  backup filename
+*/
 module.exports={
 	name:"cbeta"
 	,config:"simple1"
@@ -18,5 +25,6 @@ module.exports={
 	,callbacks: {
 		beforebodystart:beforebydstart
 		,afterbodyend:afterbodyend
+		,onFile:onFile
 	}
 }

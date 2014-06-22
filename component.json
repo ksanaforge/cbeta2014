@@ -1,0 +1,34 @@
+{
+  "name": "cbeta2014",
+  "repo": "https://github.com/ksanaforge/cbeta2014.git",
+  "description": "hello world",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {
+    "ksanaforge/boot": "*",
+    "socketio/socketio": "*",
+    "brighthas/bootstrap": "*",
+    "ksana/document": "*",
+    "ksanaforge/kse": "*",
+    "component/jquery": "*",
+    "cbeta2014/main": "*",
+    "cbeta2014/comp1": "*"
+  },
+  "development": {},
+  "paths": [
+    "components",
+    "../components",
+    "../node_modules/"
+  ],
+  "local": [
+    "facebook/react"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": [
+    "index.js"
+  ],
+  "styles": [
+    "index.css"
+  ]
+}
