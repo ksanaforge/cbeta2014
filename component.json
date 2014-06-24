@@ -10,6 +10,7 @@
     "brighthas/bootstrap": "*",
     "ksana/document": "*",
     "ksanaforge/kse": "*",
+    "ksanaforge/kse-mixins": "*",
     "component/jquery": "*",
     "cbeta2014/main": "*",
     "cbeta2014/comp1": "*"

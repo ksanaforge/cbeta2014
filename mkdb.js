@@ -23,7 +23,7 @@ var config={
 	name:"cbeta"
 	,config:"simple1"
 	,glob:taisho
-	,pageSeparator:"pb.n"
+	,pageSeparator:"pb.xml:id"
 	,format:"TEIP5"
 	, bodystart: "<body>"
 	, bodyend : "</body>"
