@@ -41,7 +41,8 @@ var main = React.createClass({
   renderinputs:function() {  // input interface for search
     if (this.state.db) {
       return ( 
-        <div><input onKeyPress={this.keypress} ref="tofind" defaultValue="當觀色無常"></input>
+        //"則為正"  "為正觀" both ok
+        <div><input onKeyPress={this.keypress} ref="tofind" defaultValue="則為正觀"></input>
         <button ref="btnsearch" onClick={this.dosearch}>GO</button>
         </div>
         )      

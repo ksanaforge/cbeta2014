@@ -1,15 +1,18 @@
-var taisho="/CBReader/XML/T*/*.xml";
+var taisho="/CBReader/XML/T01/*.xml";
+var cbeta_tei_p5=require("./cbeta_tei_p5");
 var outback = function (s) {
     while (s.length < 70) s += ' ';
     var l = s.length; 
     for (var i = 0; i < l; i++) s += String.fromCharCode(8);
     process.stdout.write(s);
 }
-var beforebydstart=function(s,status) {
-	//console.log("start",s.length);
+var beforebodystart=function(s,status) {
 }
 var afterbodyend=function(s,status) {
-	//console.log("end",s.length);
+	//status has parsed body text and raw body text, raw start text
+	
+	var apps=cbeta_tei_p5(status.starttext+s,status.parsed);
+	//console.log(apps)
 }
 
 var onFile=function(fn) {
@@ -30,9 +33,9 @@ var config={
 	,reset:true
 	,finalized:finalized
 	,callbacks: {
-		//beforebodystart:beforebydstart
-		//,afterbodyend:afterbodyend
-		onFile:onFile
+		beforebodystart:beforebodystart
+		,afterbodyend:afterbodyend
+		,onFile:onFile
 	}
 }
 setTimeout(function(){ //this might load by gulpfile-app.js
