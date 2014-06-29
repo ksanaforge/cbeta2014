@@ -2,10 +2,13 @@ var sax=require("sax");
 var apparatus=require("./apparatus");
 var choice=require("./choice");
 var note=require("./note");
-
-var parser=null;
+var errors=[];
+var parser=null,filename="";
 var apps=[], notes=[] ,choices=[];
-
+var warn=function(err) {
+	errors.push(err, filename);
+	console.log(err,filename);
+}
 var onclosetag_app=function(app) {
 	apps.push(app);
 	parser.onclosetag=onclosetag;
@@ -24,6 +27,8 @@ var onclosetag_choice=function(choice) {
 var onopentag=function(e) {
 	if (e.name=="app") {
 		apparatus.open(e.attributes,parser, onclosetag_app);
+	} else if (e.name=="cb:tt") {
+		apparatus.opencbtt(e.attributes,parser, onclosetag_app);
 	} else if (e.name=="note") {
 		if (e.attributes.n) note.open(e.attributes,parser, onclosetag_note);
 	} else if (e.name=="choice") {
@@ -48,7 +53,7 @@ var closeAnchor=function(pg,T,anchors,id,texts) {
 		}
 		return;
 	}
-	throw "cannot find beg pointer for anchor:"+id;
+	warn("cannot find beg pointer for anchor:"+id);
 }
 // [pg, start, len, id]
 var createAnchors=function(parsed) {
@@ -70,15 +75,14 @@ var createAnchors=function(parsed) {
 	}
 	return anchors;	
 }
-var resolveApp=function(apps,anchors) {
-	//build app index
+var resolveApp=function(apps,anchors,texts) { //resolve app and cb:tt
 	var froms={};
 	apps.map(function(A,idx){ 
 		if (!A.from) {
-			throw "no 'from' in "+JSON.stringify(A);
+			warn("no 'from' in "+JSON.stringify(A));
 			return;
 		} 
-		if (froms[A.from]) throw "repeat id"+A.from;
+		if (froms[A.from]) warn("repeat id"+A.from);
 		froms[A.from]=idx+1;
 	});
 
@@ -87,16 +91,19 @@ var resolveApp=function(apps,anchors) {
 		if (typeof id!="string") continue;//already resolve
 		if (froms[id]) {
 			var rdg=apps[ froms[id]-1].rdg;
+			var lemma=apps[ froms[id]-1].lemma.replace(/[\n\t]/g,"");
+			var sourcetext=texts[anchors[i][0]].t.substr( anchors[i][1], anchors[i][2]).replace(/[\n\t]/g,"");
+			//beg0034031 , inline note, sourcetext is ""
+			if (lemma!=sourcetext && lemma &&sourcetext) console.log("lemma not same"+JSON.stringify(lemma+"<>"+sourcetext+" id:"+id));
 			anchors[i][3]={type:"app", rdg:rdg};
 		}
 	}
 }
 var resolveNote=function(notes,anchors) {
-	//build app index
 	var targets={};
 	notes.map(function(N,idx){ 
 		if (!N.target) {
-			throw "no 'target' in "+JSON.stringify(N);
+			warn("no 'target' in "+JSON.stringify(N));
 			return;
 		} 
 		/*
@@ -133,24 +140,23 @@ var resolveChoice=function() {
 }
 var  createMarkups=function(parsed) {
 	var anchors=createAnchors(parsed);
-	resolveApp(apps,anchors);
+	resolveApp(apps,anchors,parsed.texts);
 	resolveNote(notes,anchors);
 	resolveChoice(choices,anchors);
-	//resolveCbtt() <cb:tt type="app" 
 	for (var i=0;i<anchors.length;i++) {
 		if (typeof anchors[i][3]=="string") {
-			console.log("unresolve",anchors[i]);
+			warn("unresolve "+anchors[i]);
 		}
 	}
 	return anchors;
 }
 
-var parseP5=function(xml,parsed) {
+var parseP5=function(xml,parsed,fn) {
 	parser=sax.parser(true);
 	apps=[];
 	notes=[];
 	choices=[];
-
+	filename=fn;
 	parser.onopentag=onopentag;
 	parser.onclosetag=onclosetag;
 	parser.write(xml);

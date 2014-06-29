@@ -11,7 +11,7 @@ var beforebodystart=function(s,status) {
 var afterbodyend=function(s,status) {
 	//status has parsed body text and raw body text, raw start text
 	
-	var apps=cbeta_tei_p5(status.starttext+s,status.parsed);
+	var apps=cbeta_tei_p5(status.starttext+s,status.parsed,status.filename);
 	//console.log(apps)
 }
 
