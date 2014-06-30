@@ -1,21 +1,25 @@
 var notes=[];
 var note=null;
-var handler=function(ending) {
+var handler=function(closing) {
 	var node=this.now.name;
 	var target=this.now.attributes.target;
-	if (ending) {
+	if (closing) {
 		if (node=="note") {
 			note.text=this.text;
 			notes.push(note);			
 		} else if (node=="choice") {
-			console.log("ending choice")
+			this.parentHandler=null;
+			this.text+=this.choice.corr;
+			this.choice=null;
 		}
 	} else {
 		if (this.now.name=="note") {
 			if (target) note={target:target.substr(1),text:""};
 			else this.handler.null; //note without target is dropped
 		} else if (this.now.name=="choice") {
-			console.log(this.now)
+			this.parentHandler=handler;
+			this.handler=require("./choice").handler;
+			this.handler();
 		}
 	}
 }
