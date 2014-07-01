@@ -1,29 +1,35 @@
 var notes=[];
 var note=null;
-var handler=function(closing) {
+var handler=function(root) {
 	var node=this.now.name;
 	var target=this.now.attributes.target;
-	if (closing) {
-		if (node=="note") {
-			note.text=this.text;
-			notes.push(note);			
-		} else if (node=="choice") {
-			this.parentHandler=null;
-			this.text+=this.choice.corr;
-			this.choice=null;
-		}
-	} else {
-		if (this.now.name=="note") {
-			if (target) note={target:target.substr(1),text:""};
-			else this.handler.null; //note without target is dropped
-		} else if (this.now.name=="choice") {
-			this.parentHandler=handler;
-			this.handler=require("./choice").handler;
-			this.handler();
-		}
+	if (node=="note") {
+		if (target) note={target:target.substr(1),text:""};
+		else this.handler.null; //note without target is dropped
+	} else if (node=="choice") {
+		this.parentHandler=handler;
+		this.parentCloseHandler=close_handler;
+		this.handler=require("./choice").handler;
+		this.close_handler=require("./choice").close_handler;
+		this.handler(true);
+	} else if (node=="app") {
+		throw "app inside note";
 	}
 }
-
+var close_handler=function(root) {
+	var node=this.now.name;
+	if (node=="note") {
+		note.text=this.text;
+		notes.push(note);			
+	} else if (node=="choice") {
+		this.parentHandler=null;
+		this.parentCloseHandler=null;
+		this.text+=this.choice.corr;
+		this.choice=null;
+		this.handler=handler;
+		this.close_handler=close_handler;
+	}
+}
 var resolve=function(anchors) {
 	console.log(notes);
 	return;
@@ -63,4 +69,11 @@ var resolve=function(anchors) {
 		anchors[i][4]=link;
 	}
 }
-module.exports={handler:handler, resolve:resolve};
+var result=function() {
+	return notes;
+}
+module.exports={handler:handler
+	,close_handler:close_handler
+	,resolve:resolve
+	,result:result
+};

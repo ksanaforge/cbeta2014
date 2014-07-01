@@ -1,118 +1,91 @@
-var app=null;  //<app> apparatus
-var closeapp=null;
-var closechildapp=null;
-var inlem=false, lemtext=""; //<lem> lemma
-var rdg=null,inrdg=false,rdgtext=""; //<rdg>
-var innote=false;
-var parser=null,childapp=false,inlang=false,lang="",langtext="";
-/*
-  TODO , APP can be nested !!
+var app=null,rdg=null,childrdg=null,childapp=null;  //<app> apparatus
+var apps=[];
+
+var resolve=function(anchors,texts) { //resolve app and cb:tt
+	return;
+	var froms={};
+	apps.map(function(A,idx){ 
+		if (!A.from) {
+			warn("no 'from' in "+JSON.stringify(A));
+			return;
+		} 
+		if (froms[A.from]) warn("repeat id "+A.from);
+		froms[A.from]=idx+1;
+	});
+/*known problem
+  beg0053009 , extra pb , causing last word 來 not included in source text
 */
-var ontext=function(t) {
-	if (innote) return;
-	if (inlem) lemtext+=t;
-	if (inrdg) rdgtext+=t;
-	if (inlang) langtext+=t;
+	for (var i=0;i<anchors.length;i++) {
+		var id=anchors[i][3];
+		var link=anchors[i][4] || [];
+		if (froms[id]) {
+			var rdg=apps[ froms[id]-1].rdg;
+			var lemma=apps[ froms[id]-1].lemma.replace(/[\n\t]/g,"");
+			var sourcetext=texts[anchors[i][0]].t.substr( anchors[i][1], anchors[i][2]).replace(/[\n\t]/g,"");
+			sourcetext=sourcetext.substring(0,lemma.length);//remote possible node beg0816012 , <note> is removed
+			//beg0034031 , inline note, sourcetext is ""
+			if (lemma!=sourcetext && lemma &&sourcetext) console.log("lemma not same"+JSON.stringify(lemma+"<>"+sourcetext+" id:"+id));
+			link.push({type:"app", rdg:rdg});
+		}
+		anchors[i][4]=link;
+	}
 }
-var onclosechoice=function(choice) {
-/*
-  <choice> inside app has no "from" and "to",
-  use <corr> directly in node text,  <sic> is dropped.
-*/
-	if (choice.corr) ontext(choice.corr); 
-	parser.onopentag=onopentag;
-	parser.onclosetag=onclosetag;
-	parser.ontext=ontext;
-}
-var oncloseapp=function(app) { //child app
-	parser.onopentag=onopentag;
-	parser.onclosetag=onclosetag;
-	parser.ontext=ontext;
-	childapp=false;
+var beforenote="";
+var handler=function(root) {
+	var node=this.now.name;
+	if (node=="app") {
+		var from=this.now.attributes.from;
+		if (from) from=from.substr(1);
+		if (root) app={lemma:"",rdg:[],from:from};
+		else 	childapp={lemma:"",rdg:[]};
+	}else if (node=="rdg") {
+		if (childapp)childrdg={text:"",wit: this.now.attributes.wit };
+		else rdg={text:"",wit: this.now.attributes.wit };
+	} else if (node=="note") {
+		beforenote=this.text;
+	} else {
+		//console.log("unknown tag",this.now.name);
+	}
 
 }
-var onopentag_cbtt=function(e) {
-	if (e.name=="cb:t") {
-		lang=e.attributes["xml:lang"];
-		if (lang=="zh") { //assume zh as lemma
-			lemtext="";
-			inlem=true;
+
+
+var close_handler=function(root) {
+	var node=this.now.name;
+	if (node=="app") {
+		if (root) {
+			apps.push(app);
+			app=null;
 		} else {
-			langtext="";
-			inlang=true;
+			if (childapp) this.text+=childapp.lemma; //only take lemma
+			if (this.parentCloseHandler) {
+				this.app=app;
+				this.parentCloseHandler();
+			}
+			childapp=null;
 		}
-	} else if (e.name=="app") {
-		childapp=true;
-		open(e,parser,oncloseapp);
-	}
-}
-var onopentag=function(e) {
-	if (e.name=="lem") { //cbeta wit always wit1
-		inlem=true;
-		lemtext="";
-	} else if (e.name=="rdg") {
-		inrdg=true;
-		rdgtext="";
-		rdg={wit:e.attributes.wit.split(" ")};
-	} else if (e.name=="note") { // note in lem or rdg is dropped
-		innote=true;
-	} else if (e.name=="choice") { //cbeta wit always wit1
-		require("./choice").open(e,parser,onclosechoice);
-	} else if (e.name=="app") {
-		childapp=true;
-		open(e,parser,oncloseapp);
-	} else {
-		//unknown tag
-	}
-}
-var onclosetag=function(e) {
-	if (e=="app") {
-		closeapp( app);
-	} else if (e=="lem") {
-		inlem=false;
-		app.lemma=lemtext;
-	} else if (e=="rdg") {
-		if (!childapp) {
-			rdg.text=rdgtext;
+	} else if (node=="lem") {
+		if (childapp) childapp.lemma=this.text;
+		else 	app.lemma=this.text;
+		this.text="";
+	} else if (node=="note") {
+		this.text=beforenote;//remove all text inside note
+	} else if (node=="rdg") {
+		if (childapp) {
+			childrdg.text=this.text;
+			childapp.rdg.push(childrdg);
+		} else {
+			rdg.text=this.text;
 			app.rdg.push(rdg);
 		}
-		inrdg=false;
-	} else if (e=="note") {
-		innote=false;
-	} else if (e=="cb:tt") {
-		closechildapp(app);
-		innote=false;
-	} else if (e=="cb:t") {//for cb:tt
-		if (inlem)  {
-			inlem=false;
-			app.lemma=lemtext;
-		}
-		if (inlang)  {
-			inlang=false;
-			app.rdg.push({text:langtext,lang:lang});
-			langtext="";
-			lang="";
-		}
-
+		this.text="";
 	}
 }
-var open=function(attrs,_parser,_closeapp) {
-	app={rdg:[]};
-	parser=_parser;
-	parser.ontext=ontext;
-	parser.onopentag=onopentag;
-	parser.onclosetag=onclosetag;
-	closeapp=_closeapp;
-	if (attrs.from)app.from=attrs.from.substr(1); //remove #
+var result=function() {
+	return apps;
 }
-var opencbtt=function(attrs,_parser,_closeapp) {	
-	app={rdg:[]};
-	parser=_parser;
-	parser.ontext=ontext;
-	parser.onopentag=onopentag_cbtt;
-	parser.onclosetag=onclosetag;
-	closechildapp=_closeapp;
-	if (attrs.from)app.from=attrs.from.substr(1); //remove #
-}
-
-module.exports={open:open,opencbtt:opencbtt};
+module.exports={handler:handler
+		,close_handler:close_handler
+		,resolve:resolve
+		,result:result
+	};

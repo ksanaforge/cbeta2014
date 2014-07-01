@@ -18,30 +18,35 @@ var onopentag=function(e) {
 	context.path=context.paths.join("/");
 	if (!context.handler) {
 		var handler=context.handlers[context.path];
-		if (handler) {
-			context.handler=handler;
-		}		
+		if (handler) 	context.handler=handler;
+		var close_handler=context.close_handlers[context.path];
+		if (close_handler) 	context.close_handler=close_handler;
+		if (context.handler)  context.handler(true);
+	} else {
+		context.handler();
 	}
-	if (context.handler)  context.handler();
+	
 }
 
 var onclosetag=function(e) {
 	context.now=context.parents[context.parents.length-1];
 
-	var handler=context.handlers[context.path];
+	var handler=context.close_handlers[context.path];
 	if (handler) {
-		if (context.handler) context.handler(true);
+		if (context.close_handler) context.close_handler(true);
 		context.handler=null;//stop handling
+		context.close_handler=null;//stop handling
 		context.text="";
-	} else if (context.handler) {
-		context.handler(true);
+	} else if (context.close_handler) {
+		context.close_handler();
 	}
 	context.paths.pop();
 	context.parents.pop();
 	context.path=context.paths.join("/");		
 }
-var addHandler=function(path,handler) {
-	if (handler) context.handlers[path]=handler;
+var addHandler=function(path,tagmodule) {
+	if (tagmodule.handler) context.handlers[path]=tagmodule.handler;
+	if (tagmodule.close_handler) context.close_handlers[path]=tagmodule.close_handler;
 }
 var closeAnchor=function(pg,T,anchors,id,texts) {
 	var beg="beg"+id.substr(3);
@@ -80,36 +85,12 @@ var createAnchors=function(parsed) {
 	return anchors;	
 }
 
-var resolveChoice=function(choices,anchors,texts) {
-	var froms={};
-	choices.map(function(C,idx){ 
-		if (!C.from) {
-			warn("no 'from' in "+JSON.stringify(C));
-			return;
-		} 
-		if (froms[C.from]) warn("repeat id"+C.from);
-		froms[C.from]=idx+1;
-	});
-
-	for (var i=0;i<anchors.length;i++) {
-		var id=anchors[i][3];
-		var link=anchors[i][4] || [];
-		if (froms[id]) {
-			var sic=choices[ froms[id]-1].sic;
-			var corr=choices[ froms[id]-1].corr.replace(/[\n\t]/g,"");
-			var sourcetext=texts[anchors[i][0]].t.substr( anchors[i][1], anchors[i][2]).replace(/[\n\t]/g,"");
-			//beg0034031 , inline note, sourcetext is ""
-			if (corr!=sourcetext && corr &&sourcetext) console.log("corr not same"+JSON.stringify(corr+"<>"+sourcetext+" id:"+id));
-			link.push({type:"choice", sic:sic});
-		}
-		anchors[i][4]=link;
-	}
-}
 var  createMarkups=function(parsed) {
 
 	anchors=createAnchors(parsed);
 	//resolveApp(apps,anchors,parsed.texts);
 	//resolveCbtt(cbtt,anchors,parsed.texts);
+	require("./apparatus").resolve(anchors);
 	require("./note").resolve(anchors);
 	//resolveChoice(choices,anchors,parsed.texts);
 
@@ -125,15 +106,24 @@ var  createMarkups=function(parsed) {
 var parseP5=function(xml,parsed,fn) {
 	parser=sax.parser(true);
 	filename=fn;
-	context={ paths:[] , parents:[], handlers:{}, text:"" ,now:null};
+	context={ paths:[] , parents:[], handlers:{}, close_handlers:{}, text:"" ,now:null};
 	parser.onopentag=onopentag;
 	parser.onclosetag=onclosetag;
 	parser.ontext=ontext;
-	addHandler(  "TEI/text/back/cb:div/p/note", require("./note").handler );
+	addHandler(  "TEI/text/back/cb:div/p/note", require("./note"));
+	addHandler(  "TEI/text/back/cb:div/p/app", require("./apparatus"));
+	addHandler(  "TEI/text/back/cb:div/p/choice", require("./choice"));
+	addHandler(  "TEI/text/back/cb:div/p/cb:tt", require("./cbtt"));
 
 	parser.write(xml);
 
 	parser=null;
-	return createMarkups(parsed);
+	if (parsed) return createMarkups(parsed);
+	else return { //raw result for debug
+		apps:require("./apparatus").result()
+		,notes:require("./note").result()
+		,choices:require("./choice").result()
+		,cbtts:require("./cbtt").result()
+	} ;
 }
 module.exports=parseP5;
