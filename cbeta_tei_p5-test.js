@@ -12,12 +12,19 @@ QUnit.test("app",function(){
 QUnit.test("note",function(){
 	equal(res.notes[0].target,"nkr_note_mod_0020003");
 	equal(res.notes[0].text,"牒＝藝【元】【明】＊");
+
+	equal(res.notes[1].target,"nkr_note_mod_0941009");
+	equal(res.notes[1].text,"瑩＝鎣【甲】＊");	
 });
 
 QUnit.test("choice",function(){
 	equal(res.choices[0].from,"beg_38");
 	equal(res.choices[0].corr,"辦");
 	equal(res.choices[0].sic,"辨");
+
+	equal(res.choices[1].from,"beg_ef");
+	equal(res.choices[1].orig,"𪄲鴹");
+	equal(res.choices[1].reg,"商羊");
 });
 
 QUnit.test("cbtt",function(){
@@ -31,4 +38,9 @@ QUnit.test("cbtt",function(){
 	equal(res.cbtts[1].cbt[0].lang,"zh");	
 	equal(res.cbtts[1].cbt[1].text,"Pāvā.");
 	equal(res.cbtts[1].cbt[1].lang,"pi");	
+
+	equal(res.cbtts[2].cbt[0].text,"耆闍崛山");
+	equal(res.cbtts[2].cbt[0].lang,"zh");	
+	equal(res.cbtts[2].cbt[1].text,"Gijjhakūṭa-pabbata.");
+	equal(res.cbtts[2].cbt[1].lang,"pi");		
 });

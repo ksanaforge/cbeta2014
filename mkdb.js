@@ -1,4 +1,4 @@
-var taisho="/CBReader/XML/T01/*.xml";
+var taisho="/CBReader/XML/T39/T39n1799_008.xml";
 var cbeta_tei_p5=require("./cbeta_tei_p5");
 var outback = function (s) {
     while (s.length < 70) s += ' ';

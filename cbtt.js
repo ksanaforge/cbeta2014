@@ -63,6 +63,7 @@ var close_handler=function(root) {
 		} else if (node=="app") {
 			this.parentHandler=null;
 			this.parentCloseHandler=null;
+			if (!this.app) debugger;
 			this.text+=this.app.lemma;
 			this.app=null;
 			this.handler=handler;

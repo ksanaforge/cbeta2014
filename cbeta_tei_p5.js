@@ -115,7 +115,7 @@ var parseP5=function(xml,parsed,fn) {
 	addHandler(  "TEI/text/back/cb:div/p/cb:tt", require("./cbtt"));
 
 	parser.write(xml);
-
+	context=null;
 	parser=null;
 	if (parsed) return createMarkups(parsed);
 	else return { //raw result for debug

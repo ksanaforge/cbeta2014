@@ -6,6 +6,9 @@
 <p>
 <choice cb:from="#beg_38" cb:to="#end_38"><corr>辦</corr><sic>辨</sic></choice>
 <app from="#beg0023012" to="#end0023012"><lem wit="#wit1">毾<g ref="#CB01070">𣰆</g>，綩<app type="star" corresp="#0023003"><lem wit="#wit1">綖</lem><rdg resp="#resp1" wit="#wit3">綖筵</rdg></app></lem><rdg resp="#resp1" wit="#wit5">塔登菀莚</rdg></app>
+
+<choice cb:from="#beg_ef" cb:to="#end_ef"><orig><g ref="#CB13566">𪄲</g>鴹</orig><reg type="通用詞">商羊</reg></choice>
+
 <cb:tt type="app" from="#beg0016018" to="#end0016018">
 	<cb:t resp="#resp1" xml:lang="zh">香塔</cb:t>
 	<cb:t resp="#resp1" xml:lang="pi" place="foot">Kūṭāgāra.</cb:t>
@@ -14,8 +17,14 @@
 	<cb:t resp="#resp1" xml:lang="zh"><app n="0017012"><lem wit="#wit1">婆梨婆</lem><rdg resp="#resp1" wit="#wit2 #wit3 #wit4">波梨娑</rdg><rdg resp="#resp1" wit="#wit5">婆梨娑</rdg></app></cb:t>
 	<cb:t resp="#resp1" xml:lang="pi" place="foot">Pāvā.</cb:t>
 </cb:tt>
+<cb:tt type="app" from="#beg0803017" to="#end0803017">
+	<cb:t resp="#resp1" xml:lang="zh"><app n="0803017"><lem wit="#wit1">耆闍<note n="0803018" resp="#resp1" type="orig" place="foot text">崛＝掘【聖】＊</note><app n="0803018"><lem wit="#wit1">崛</lem><rdg resp="#resp1" wit="#wit4">掘</rdg></app>山</lem><rdg resp="#resp1" wit="#wit5">者闍崛山</rdg></app></cb:t>
+	<cb:t resp="#resp1" xml:lang="pi" place="foot">Gijjhakūṭa-pabbata.</cb:t>
+</cb:tt>
 <note n="0020003" resp="#resp2" type="mod" target="#nkr_note_mod_0020003"><choice><corr>牒</corr><sic>牃</sic></choice>＝藝【元】【明】＊</note>
+<note n="0941009" resp="#resp2" type="mod" target="#nkr_note_mod_0941009">瑩＝鎣【甲】<choice cb:resp="#resp4"><corr>＊</corr><sic><space quantity="0"/></sic></choice></note>
 </p>
+
 </cb:div>
 </back>
 </text>

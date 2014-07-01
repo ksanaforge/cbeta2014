@@ -2,28 +2,42 @@ var choice=null;
 var choices=[];
 //deal with choice with note
 
-var handler=function() {
+var handler=function(root) {
 	if (this.now.name=="choice") {
-		var from=this.now.attributes["cb:from"];
-		choice={corr:"",sic:""};
-		if (from) choice.from=from.substr(1);
+		if (root) {
+			var from=this.now.attributes["cb:from"];
+			choice={corr:"",sic:""};
+			if (from) choice.from=from.substr(1);			
+		} else {
+			this.parentCloseHandler=close_handler;// choice in choice
+		}
 	}
 }
-var close_handler=function() {
-	if (this.now.name=="corr") {
+var close_handler=function(root) {
+	var node=this.now.name;
+	if (node=="corr") {
 		choice.corr=this.text;
 		this.text="";
-	} else if (this.now.name=="sic") {
+	} else if (node=="sic") {
 		choice.sic=this.text;
 		this.text="";
-	}else if (this.now.name=="choice") {
+	} else if (node=="reg") {
+		choice.reg=this.text;
+		this.text="";
+	} else if (node=="orig") {
+		choice.orig=this.text;
+		this.text="";
+	}else if (node=="choice") {
 		if (this.now.attributes.from) choice.from=this.now.attributes.from.substr(1);
 		if (this.now.attributes.to) choice.to=this.now.attributes.to.substr(1);
 		if (this.parentCloseHandler) {
-			this.choice=choice;				
-			this.parentCloseHandler(true);
+			this.choice=choice;		
+			var chandler=this.parentCloseHandler;
+			this.parentCloseHandler=null;
+			//to prevent choice/corr/choice to double push into choices
+			if (chandler!=close_handler) chandler.apply(this,[true]);
 		} else {
-			choices.push(choice);
+			if (choice.from) choices.push(choice); 
 		}
 	}
 }
@@ -31,10 +45,10 @@ var resolve=function(anchors,texts){
 	var froms={};
 	choices.map(function(C,idx){ 
 		if (!C.from) {
-			warn("no 'from' in "+JSON.stringify(C));
+			console.warn("no 'from' in "+JSON.stringify(C));
 			return;
 		} 
-		if (froms[C.from]) warn("repeat id"+C.from);
+		if (froms[C.from]) console.warn("repeat id "+C.from);
 		froms[C.from]=idx+1;
 	});
 

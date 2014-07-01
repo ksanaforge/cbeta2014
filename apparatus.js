@@ -62,7 +62,7 @@ var close_handler=function(root) {
 			app=null;
 		} else {
 			if (childapp) this.text+=childapp.lemma; //only take lemma
-			if (this.parentCloseHandler) {
+			if (this.parentCloseHandler && !childapp) { //T02n0125_047.xml cb:tt/cb:t/app/lem/app
 				this.app=app;
 				this.parentCloseHandler();
 			}
