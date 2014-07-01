@@ -6,7 +6,7 @@ var context=null;
 
 var warn=function(err) {
 	errors.push(err, filename);
-	//console.log(err,filename);
+	console.log(err,filename);
 }
 var ontext=function(e) {
 	if (context.handler) context.text+=e;
@@ -47,6 +47,7 @@ var onclosetag=function(e) {
 var addHandler=function(path,tagmodule) {
 	if (tagmodule.handler) context.handlers[path]=tagmodule.handler;
 	if (tagmodule.close_handler) context.close_handlers[path]=tagmodule.close_handler;
+	if (tagmodule.reset) tagmodule.reset();
 }
 var closeAnchor=function(pg,T,anchors,id,texts) {
 	var beg="beg"+id.substr(3);
@@ -86,17 +87,15 @@ var createAnchors=function(parsed) {
 }
 
 var  createMarkups=function(parsed) {
-
 	anchors=createAnchors(parsed);
-	//resolveApp(apps,anchors,parsed.texts);
-	//resolveCbtt(cbtt,anchors,parsed.texts);
-	require("./apparatus").resolve(anchors);
-	require("./note").resolve(anchors);
-	//resolveChoice(choices,anchors,parsed.texts);
+	require("./apparatus").resolve(anchors,parsed.texts);
+	require("./note").resolve(anchors,parsed.texts);
+	require("./choice").resolve(anchors,parsed.texts);
+	require("./cbtt").resolve(anchors,parsed.texts);
 
 	for (var i=0;i<anchors.length;i++) {
 		if (anchors[i][4] && !anchors[i][4].length) {
-			warn("unresolve "+anchors[i]);
+			if (anchors[i][3].substr(0,2)!="fx")	warn("unresolve "+anchors[i]);
 		}
 	}
 	return anchors;

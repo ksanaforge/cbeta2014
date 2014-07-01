@@ -2,14 +2,16 @@ var app=null,rdg=null,childrdg=null,childapp=null;  //<app> apparatus
 var apps=[];
 
 var resolve=function(anchors,texts) { //resolve app and cb:tt
-	return;
 	var froms={};
 	apps.map(function(A,idx){ 
 		if (!A.from) {
 			warn("no 'from' in "+JSON.stringify(A));
 			return;
 		} 
-		if (froms[A.from]) warn("repeat id "+A.from);
+		if (froms[A.from]) {
+			debugger;
+			console.warn("repeat id "+A.from);
+		}
 		froms[A.from]=idx+1;
 	});
 /*known problem
@@ -19,12 +21,14 @@ var resolve=function(anchors,texts) { //resolve app and cb:tt
 		var id=anchors[i][3];
 		var link=anchors[i][4] || [];
 		if (froms[id]) {
+			/*
 			var rdg=apps[ froms[id]-1].rdg;
 			var lemma=apps[ froms[id]-1].lemma.replace(/[\n\t]/g,"");
 			var sourcetext=texts[anchors[i][0]].t.substr( anchors[i][1], anchors[i][2]).replace(/[\n\t]/g,"");
 			sourcetext=sourcetext.substring(0,lemma.length);//remote possible node beg0816012 , <note> is removed
 			//beg0034031 , inline note, sourcetext is ""
 			if (lemma!=sourcetext && lemma &&sourcetext) console.log("lemma not same"+JSON.stringify(lemma+"<>"+sourcetext+" id:"+id));
+			*/
 			link.push({type:"app", rdg:rdg});
 		}
 		anchors[i][4]=link;
@@ -84,8 +88,13 @@ var close_handler=function(root) {
 var result=function() {
 	return apps;
 }
+var reset=function() {
+	apps=[];
+	app=null;
+}
 module.exports={handler:handler
 		,close_handler:close_handler
 		,resolve:resolve
 		,result:result
+		,reset:reset
 	};

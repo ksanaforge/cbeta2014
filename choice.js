@@ -27,7 +27,7 @@ var close_handler=function() {
 		}
 	}
 }
-var resolve=function(anchors){
+var resolve=function(anchors,texts){
 	var froms={};
 	choices.map(function(C,idx){ 
 		if (!C.from) {
@@ -43,10 +43,12 @@ var resolve=function(anchors){
 		var link=anchors[i][4] || [];
 		if (froms[id]) {
 			var sic=choices[ froms[id]-1].sic;
+			/*
 			var corr=choices[ froms[id]-1].corr.replace(/[\n\t]/g,"");
 			var sourcetext=texts[anchors[i][0]].t.substr( anchors[i][1], anchors[i][2]).replace(/[\n\t]/g,"");
 			//beg0034031 , inline note, sourcetext is ""
 			if (corr!=sourcetext && corr &&sourcetext) console.log("corr not same"+JSON.stringify(corr+"<>"+sourcetext+" id:"+id));
+			*/
 			link.push({type:"choice", sic:sic});
 		}
 		anchors[i][4]=link;
@@ -55,5 +57,9 @@ var resolve=function(anchors){
 var result=function() {
 	return choices;
 }
+var reset=function() {
+	choices=[];
+	choice=null;
+}
 module.exports={handler:handler,close_handler:close_handler,
-	resolve:resolve,result:result}
+	resolve:resolve,result:result,reset:reset}

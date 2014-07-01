@@ -16,12 +16,15 @@ var resolve=function(anchors,texts) { //resolve app and cb:tt
 		var id=anchors[i][3];
 		var link=anchors[i][4] || [];
 		if (froms[id]) {
-			var rdg=cbtt[ froms[id]-1].rdg;
+
+			var rdg=cbtts[ froms[id]-1].rdg;
+			/*
 			var lemma=cbtt[ froms[id]-1].lemma.replace(/[\n\t]/g,"");
 			var sourcetext=texts[anchors[i][0]].t.substr( anchors[i][1], anchors[i][2]).replace(/[\n\t]/g,"");
 			sourcetext=sourcetext.substring(0,lemma.length);//remote possible node beg0816012 , <note> is removed
 			//beg0034031 , inline note, sourcetext is ""
 			if (lemma!=sourcetext && lemma &&sourcetext) console.log("lemma not same"+JSON.stringify(lemma+"<>"+sourcetext+" id:"+id));
+			*/
 			link.push({type:"cbtt", rdg:rdg});
 		}
 		anchors[i][4]=link;
@@ -70,5 +73,9 @@ var close_handler=function(root) {
 var result=function() {
 	return cbtts;
 }
+var reset=function() {
+	cbtts=[];
+	cbtt=null;
+}
 module.exports={handler:handler,close_handler:close_handler,
-	resolve:resolve,result:result}
+	resolve:resolve,result:result,reset:reset}

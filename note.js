@@ -13,7 +13,11 @@ var handler=function(root) {
 		this.close_handler=require("./choice").close_handler;
 		this.handler(true);
 	} else if (node=="app") {
-		throw "app inside note";
+		this.parentHandler=handler;
+		this.parentCloseHandler=close_handler;
+		this.handler=require("./apparatus").handler;
+		this.close_handler=require("./apparatus").close_handler;
+		this.handler(true);
 	}
 }
 var close_handler=function(root) {
@@ -28,11 +32,16 @@ var close_handler=function(root) {
 		this.choice=null;
 		this.handler=handler;
 		this.close_handler=close_handler;
+	} else if (node=="app") {
+		this.parentHandler=null;
+		this.parentCloseHandler=null;
+		this.text+=this.app.lemma;
+		this.app=null;
+		this.handler=handler;
+		this.close_handler=close_handler;
 	}
 }
 var resolve=function(anchors) {
-	console.log(notes);
-	return;
 	var targets={};
 	notes.map(function(N,idx){ 
 		if (!N.target) {
@@ -72,8 +81,12 @@ var resolve=function(anchors) {
 var result=function() {
 	return notes;
 }
+var reset=function() {
+	notes=[];
+	note=null;
+}
 module.exports={handler:handler
 	,close_handler:close_handler
 	,resolve:resolve
-	,result:result
+	,result:result,reset:reset
 };
