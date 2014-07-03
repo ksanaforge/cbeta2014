@@ -81,24 +81,25 @@ var grouporder=function() {
 		d.idx=q++;
 		lastgroup=d.group;
 	}
-	
+
 	render();
 }
 
 var gcolor=function(d) {
-	g=Math.floor(d.group % 7);
+	g=Math.floor(d.group/4 % 7);
 	var s=1-d.score;
 	if (d.score==0) return d3.rgb(255,255,255);
 
 	var color=[
-  		[s*255,s*255,s*255]
-  		,[s*255,s*255,255]
+  		[s*255,s*255,255]
   		,[s*255,255,s*255]
   		,[s*255,255,255]
   		,[255,s*255,s*255]
   		,[255,s*255,255]
   		,[255,255,s*255]
+  		,[s*255,s*255,s*255]
      ][g];
+
      return d3.rgb.apply(d3,color);
 }
 var colorof=function(d ){
