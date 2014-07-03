@@ -1,0 +1,99 @@
+<html>
+<meta http-equiv="content-type" content="text/html; charset=UTF8">
+<style>
+  .rect:hover {stroke: blue; stroke-width:4;}
+</style>
+<body>
+	<button onclick="sortorder()">ORDER</button>
+	<button onclick="grouporder()">GROUP</button>
+	<button onclick="naturalorder()">NATURAL</button>
+
+<svg width="1000" height="500"></svg>
+
+<script src="d3.js"></script>
+<script>
+var cellperline=100;
+var cellcount=8000;
+var cellwidth=5;
+var cellheight=5;
+
+var createPages=function() {
+	var arr=[];
+	var groups = Math.floor(cellcount/cellperline);
+	var cellpergroup = Math.floor(cellcount/groups);
+
+	for (var i=0;i<cellcount;i++) {
+		var score=Math.random() ;
+		if (Math.random()>0.3) score=1;
+		arr.push( {name:i, score:score, group: Math.floor(i/cellpergroup) } );
+	}
+	return arr;
+}
+var data=createPages();
+var sortorder=function(){
+	data=data.sort(function(a,b){return a.score-b.score});
+	render();
+}
+var naturalorder=function(){
+	data=data.sort(function(a,b){return a.name-b.name});
+	render();
+}
+var grouporder=function() {
+	data=data.sort(function(a,b){
+		if (a.group==b.group) {
+			return a.score-b.score;
+		} else return a.group*1000-b.group*1000;
+	});
+	render();
+}
+
+var gcolor=function(d) {
+	g=Math.floor(d.group % 7);
+	var color=[
+  		[d.score*255,d.score*255,d.score*255]
+  		,[d.score*255,d.score*255,255]
+  		,[d.score*255,255,d.score*255]
+  		,[d.score*255,255,255]
+  		,[255,d.score*255,d.score*255]
+  		,[255,d.score*255,255]
+  		,[255,255,d.score*255]
+     ][g];
+     return d3.rgb.apply(d3,color);
+}
+var colorof=function(d ){
+	return gcolor(d);
+}
+var render=function() {
+	var svg = d3.select("svg");
+	var G = svg.selectAll("g")
+	    .data(data,function(d) {return d.name});
+
+	g=G.enter().append("g");
+//style("stroke-width","0.5")
+	g.append("rect").attr("class","rect")
+	   // .style("stroke","silver")
+	    .attr("width", (cellwidth-1))
+	    .attr("height",(cellheight-1) )
+	    .style("fill",function(d){return colorof(d) });
+
+/*
+	g.append("text").attr("font-size", ".5em");
+
+	G.select("text").text(function(d){return d.name})
+	 .transition().duration(2000)
+	 .attr("x",function(d,i){return ( i % cellperline) *cellwidth; })
+	 .attr("y", function(d,i) {return Math.floor( i/cellperline)*cellheight+20 })
+*/	 
+
+	G.select("rect").transition().duration(1500)
+	    .attr("y", function(d,i) {return Math.floor( i/cellperline)*cellheight+10  })
+	    .attr("x", function(d, i) { return ( i % cellperline) *cellwidth+ 0; })
+	    
+	
+
+}
+
+render();
+</script>
+
+</html>
