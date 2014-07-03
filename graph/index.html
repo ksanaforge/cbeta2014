@@ -27,7 +27,7 @@ var createPages=function() {
 
 	for (var i=0;i<cellcount;i++) {
 		var score=Math.random() ;
-		if (Math.random()>0.1) score=0;
+		if (Math.random()>0.15) score=0;
 		arr.push( {name:i, score:score, group: Math.floor(i/cellpergroup) , idx: i%cellpergroup } );
 	}
 	console.log("cellpergroup",cellpergroup)
@@ -88,7 +88,7 @@ var grouporder=function() {
 var gcolor=function(d) {
 	g=Math.floor(d.group/4 % 7);
 	var s=1-d.score;
-	if (d.score==0) return d3.rgb(255,255,255);
+	if (d.score==0) return "transparent";
 
 	var color=[
   		[s*255,s*255,255]
@@ -125,6 +125,8 @@ var render=function() {
 	    .style("opacity",function(d){d.score==0?0:1})
           .attr("y", ypos)
 	    .attr("x", xpos)
+	  //  .filter(function(d){return d.score==0})
+	//    .style("stroke","white")
 	    
 	   
 /*
@@ -140,6 +142,7 @@ var render=function() {
 	    .transition().duration(1500)
           .attr("y", ypos)
 	    .attr("x", xpos);
+
 	   
 
 }
