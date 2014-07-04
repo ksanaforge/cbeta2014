@@ -1,20 +1,22 @@
 var taisho="/CBReader/XML/T01*/*.xml";
 var tei=require("ksana-document").tei;
+
+var beforebodystart=function(s,status) {
+}
+var afterbodyend=function(s,status) {
+	//status has parsed body text and raw body text, raw start text
+	var apps=tei(status.starttext+s,status.parsed,status.filename,config);
+	//console.log(apps)
+}
+var warning=function() {
+	console.log.apply(console,arguments);
+}
 var outback = function (s) {
     while (s.length < 70) s += ' ';
     var l = s.length; 
     for (var i = 0; i < l; i++) s += String.fromCharCode(8);
     process.stdout.write(s);
 }
-var beforebodystart=function(s,status) {
-}
-var afterbodyend=function(s,status) {
-	//status has parsed body text and raw body text, raw start text
-	
-	var apps=tei(status.starttext+s,status.parsed,status.filename);
-	//console.log(apps)
-}
-
 var onFile=function(fn) {
 	outback("indexing"+fn);
 }
@@ -39,6 +41,7 @@ var config={
 	,reset:true
 	,initialize:initialize
 	,finalized:finalized
+	,warning:warning
 	,callbacks: {
 		beforebodystart:beforebodystart
 		,afterbodyend:afterbodyend

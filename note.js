@@ -85,9 +85,9 @@ var reset=function() {
 	notes=[];
 	note=null;
 }
-module.exports={handler:handler
-	,close_handler:close_handler
-	,resolve:resolve
-	,result:result,reset:reset
-	,name:"note"
-};
+var warning=function(err) {
+	console.log(err);
+}
+var API={handler:handler,close_handler:close_handler,
+	resolve:resolve,result:result,reset:reset,name:"note",warning:warning};
+module.exports=API;

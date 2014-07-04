@@ -78,5 +78,9 @@ var reset=function() {
 	cbtts=[];
 	cbtt=null;
 }
-module.exports={handler:handler,close_handler:close_handler,
-	resolve:resolve,result:result,reset:reset,name:"cbtt"}
+var warning=function(err) {
+	console.log(err);
+}
+var API={handler:handler,close_handler:close_handler,
+	resolve:resolve,result:result,reset:reset,name:"cbtt",warning:warning};
+module.exports=API;

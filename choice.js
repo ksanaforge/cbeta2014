@@ -45,10 +45,10 @@ var resolve=function(anchors,texts){
 	var froms={};
 	choices.map(function(C,idx){ 
 		if (!C.from) {
-			console.warn("no 'from' in "+JSON.stringify(C));
+			API.warning("no 'from' in "+JSON.stringify(C));
 			return;
 		} 
-		if (froms[C.from]) console.warn("repeat id "+C.from);
+		if (froms[C.from]) API.warning("repeat id "+C.from);
 		froms[C.from]=idx+1;
 	});
 
@@ -75,5 +75,9 @@ var reset=function() {
 	choices=[];
 	choice=null;
 }
-module.exports={handler:handler,close_handler:close_handler,
-	resolve:resolve,result:result,reset:reset,choice:"name"}
+var warning=function(err) {
+	console.log(err);
+}
+var API={handler:handler,close_handler:close_handler,
+	resolve:resolve,result:result,reset:reset,name:"choice",warning:warning};
+module.exports=API;

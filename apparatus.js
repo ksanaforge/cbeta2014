@@ -5,12 +5,11 @@ var resolve=function(anchors,texts) { //resolve app and cb:tt
 	var froms={};
 	apps.map(function(A,idx){ 
 		if (!A.from) {
-			warn("no 'from' in "+JSON.stringify(A));
+			API.warning("no 'from' in "+JSON.stringify(A));
 			return;
 		} 
 		if (froms[A.from]) {
-			debugger;
-			console.warn("repeat id "+A.from);
+			API.warning("repeat id "+A.from);
 		}
 		froms[A.from]=idx+1;
 	});
@@ -92,10 +91,9 @@ var reset=function() {
 	apps=[];
 	app=null;
 }
-module.exports={handler:handler
-		,close_handler:close_handler
-		,resolve:resolve
-		,result:result
-		,reset:reset
-		,name:"app"
-	};
+var warning=function(err) {
+	console.log(err);
+}
+var API={handler:handler,close_handler:close_handler,
+	resolve:resolve,result:result,reset:reset,name:"app",warning:warning};
+module.exports=API;
