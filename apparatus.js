@@ -97,4 +97,5 @@ module.exports={handler:handler
 		,resolve:resolve
 		,result:result
 		,reset:reset
+		,name:"app"
 	};

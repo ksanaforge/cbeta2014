@@ -79,4 +79,4 @@ var reset=function() {
 	cbtt=null;
 }
 module.exports={handler:handler,close_handler:close_handler,
-	resolve:resolve,result:result,reset:reset}
+	resolve:resolve,result:result,reset:reset,name:"cbtt"}

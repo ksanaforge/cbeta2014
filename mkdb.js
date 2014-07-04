@@ -1,5 +1,5 @@
-var taisho="/CBReader/XML/T[0-5]*/*.xml";
-var cbeta_tei_p5=require("./cbeta_tei_p5");
+var taisho="/CBReader/XML/T01*/*.xml";
+var tei=require("ksana-document").tei;
 var outback = function (s) {
     while (s.length < 70) s += ' ';
     var l = s.length; 
@@ -11,12 +11,18 @@ var beforebodystart=function(s,status) {
 var afterbodyend=function(s,status) {
 	//status has parsed body text and raw body text, raw start text
 	
-	var apps=cbeta_tei_p5(status.starttext+s,status.parsed,status.filename);
+	var apps=tei(status.starttext+s,status.parsed,status.filename);
 	//console.log(apps)
 }
 
 var onFile=function(fn) {
 	outback("indexing"+fn);
+}
+var initialize=function() {
+	this.addHandler(  "TEI/text/back/cb:div/p/note", require("./note"));
+	this.addHandler(  "TEI/text/back/cb:div/p/app", require("./apparatus"));
+	this.addHandler(  "TEI/text/back/cb:div/p/choice", require("./choice"));
+	this.addHandler(  "TEI/text/back/cb:div/p/cb:tt", require("./cbtt"));
 }
 var finalized=function(session) {
 	console.log("VPOS",session.vpos);
@@ -31,6 +37,7 @@ var config={
 	, bodystart: "<body>"
 	, bodyend : "</body>"
 	,reset:true
+	,initialize:initialize
 	,finalized:finalized
 	,callbacks: {
 		beforebodystart:beforebodystart

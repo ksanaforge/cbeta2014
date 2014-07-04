@@ -89,4 +89,5 @@ module.exports={handler:handler
 	,close_handler:close_handler
 	,resolve:resolve
 	,result:result,reset:reset
+	,name:"note"
 };
