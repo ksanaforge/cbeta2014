@@ -1,4 +1,4 @@
-var taisho="/CBReader/XML/T01*/*.xml";
+var taisho="/CBReader/XML/T*/*.xml";
 var tei=require("ksana-document").tei;
 
 var beforebodystart=function(s,status) {
