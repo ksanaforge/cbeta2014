@@ -70,19 +70,29 @@ var main = React.createClass({
   }, 
   onReady:function(usage,quota) {
     this.setState({quota:quota,usage:usage});
-    Kde.openLocal("cbeta.kdb",function(db){
+    if (!this.state.db) Kde.openLocal("cbeta.kdb",function(db){
         this.setState({db:db});  
     },this);      
-  },        
+    this.setState({dialog:false});
+  },
+  openFileinstaller:function(autoclose) {
+    return <fileinstaller quota="512M" autoclose={autoclose} needed={require_kdb} 
+                     onReady={this.onReady}/>
+  },
+  fidialog:function() {
+      this.setState({dialog:true});
+  },
   render: function() {  //main render routine
     if (!this.state.quota) { // install required db
-      return <fileinstaller quota="512M" autoclose="true" needed={require_kdb} 
-                     onReady={this.onReady}/>
+        return this.openFileinstaller(true);
     } else { 
     return (
       <div>
+        {this.state.dialog?this.openFileinstaller():null}
+        <button onClick={this.fidialog}>file installer</button>
         <div className="col-md-3 nopadding">
             {this.renderinputs()}
+            
             <resultlist res={this.state.res}/>
         </div>
         <div className="col-md-5 nopadding">
