@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 /*
-   SPEC :
+   SPEC : 
      檔名過慮功能。
      經號速查功能。
      頁碼速查功能。taisho page, pts page 
@@ -12,12 +12,17 @@
      
      辭典搜尋。搜尋可能名詞。 先取句子。再從游標處做 prefix search ， 退後n字再找。
 
-     對讀。
+     對讀。   
 
-*/
+*/ 
+var require_kdb=[{ 
+  filename:"cbeta.kdb"  , url:"http://ya.ksana.tw/kdb/cbeta.kdb" , desc:"cbeta"
+}];  
+var bootstrap=Require("bootstrap"); 
+var fileinstaller=Require("fileinstaller");
 var Kde=Require('ksana-document').kde;  // Ksana Database Engine
 var Kse=Require('ksana-document').kse; // Ksana Search Engine (run at client side)
-
+var maintext=Require("maintext");
 var resultlist=React.createClass({  //should search result
   show:function() {
     return this.props.res.excerpt.map(function(r,i){ // excerpt is an array 
@@ -28,24 +33,22 @@ var resultlist=React.createClass({  //should search result
       </div>
     })
   },
-  render:function() {
+  render:function() { 
     if (this.props.res) return <div>{this.show()}</div>
     else return <div>Not Found</div>
-  }
-});
-
+  } 
+});        
+   
 var main = React.createClass({
   componentDidMount:function() {
-      Kde.open("cbeta",this,function(db){
-        this.setState({db:db});  
-      });
-  },
+
+  }, 
   getInitialState: function() {
     return {res:null,db:null };
   },
   dosearch:function() {
     var tofind=this.refs.tofind.getDOMNode().value; // get tofind
-    Kse.search(this.state.db,tofind,{range:{start:0}},function(data){ //call search engine
+    Kse.search(this.state.db,tofind,{range:{start:0,maxhit:20}},function(data){ //call search engine
       this.setState({res:data});
       //console.log(data) ; // watch the result from search engine
     });
@@ -55,23 +58,40 @@ var main = React.createClass({
   },
   renderinputs:function() {  // input interface for search
     if (this.state.db) {
-      return ( 
+      return (   
         //"則為正"  "為正觀" both ok
         <div><input onKeyPress={this.keypress} ref="tofind" defaultValue="則為正觀"></input>
         <button ref="btnsearch" onClick={this.dosearch}>GO</button>
         </div>
-        )      
+        )          
     } else {
       return <span>loading database....</span>
     }
-  },
+  }, 
+  onReady:function(usage,quota) {
+    this.setState({quota:quota,usage:usage});
+    Kde.openLocal("cbeta.kdb",function(db){
+        this.setState({db:db});  
+    },this);      
+  },        
   render: function() {  //main render routine
+    if (!this.state.quota) { // install required db
+      return <fileinstaller quota="512M" autoclose="true" needed={require_kdb} 
+                     onReady={this.onReady}/>
+    } else { 
     return (
       <div>
-        {this.renderinputs()}
-        <resultlist res={this.state.res}/>
+        <div className="col-md-3 nopadding">
+            {this.renderinputs()}
+            <resultlist res={this.state.res}/>
+        </div>
+        <div className="col-md-5 nopadding">
+        </div>
+        <div className="col-md-4 nopadding">
+        </div>
       </div>
     );
+  }
   }
 });
 module.exports=main; //common JS

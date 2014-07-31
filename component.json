@@ -6,14 +6,15 @@
   "keywords": [],
   "dependencies": {
     "ksanaforge/boot": "*",
-    "socketio/socketio": "*",
     "brighthas/bootstrap": "*",
     "ksana/document": "*",
     "ksanaforge/kse": "*",
-    "ksanaforge/kse-mixins": "*",
-    "component/jquery": "*",
     "cbeta2014/main": "*",
-    "cbeta2014/comp1": "*"
+    "cbeta2014/comp1": "*",
+    "cbeta2014/maintext": "*",
+    "ksanaforge/fileinstaller":"*",
+    "ksanaforge/checkbrowser":"*",
+    "ksanaforge/htmlfs":"*"
   },
   "development": {},
   "paths": [
@@ -21,9 +22,7 @@
     "../components",
     "../node_modules/"
   ],
-  "local": [
-    "facebook/react"
-  ],
+  "local": [],
   "license": "MIT",
   "main": "index.js",
   "scripts": [

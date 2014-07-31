@@ -1,3 +1,10 @@
-.main {}
+.main {height:100%;line-height: 120%;overflow-y:auto;}
 hl {color:red;}
 hl[n="0"] {color:blue;}
+.row {
+    width:99.99%;
+}
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
