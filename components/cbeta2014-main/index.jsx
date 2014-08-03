@@ -14,7 +14,7 @@
 
      對讀。   
 
-*/ 
+*/  
 var require_kdb=[{ 
   filename:"cbeta.kdb"  , url:"http://ya.ksana.tw/kdb/cbeta.kdb" , desc:"cbeta"
 }];  
@@ -47,9 +47,10 @@ var main = React.createClass({
     return {res:null,db:null };
   },
   dosearch:function() {
+    var t=new Date();
     var tofind=this.refs.tofind.getDOMNode().value; // get tofind
     Kse.search(this.state.db,tofind,{range:{start:0,maxhit:20}},function(data){ //call search engine
-      this.setState({res:data});
+      this.setState({res:data,elapse:(new Date()-t)+"ms"});
       //console.log(data) ; // watch the result from search engine
     });
   },
@@ -90,18 +91,12 @@ var main = React.createClass({
       <div>
         {this.state.dialog?this.openFileinstaller():null}
         <button onClick={this.fidialog}>file installer</button>
-        <div className="col-md-3 nopadding">
-            {this.renderinputs()}
-            
+            {this.renderinputs()}            
+          <span>{this.state.elapse}</span>    
             <resultlist res={this.state.res}/>
-        </div>
-        <div className="col-md-5 nopadding">
-        </div>
-        <div className="col-md-4 nopadding">
-        </div>
       </div>
     );
   }
-  }
+  } 
 });
 module.exports=main; //common JS
