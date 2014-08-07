@@ -1,5 +1,40 @@
-var taisho="/CBReader/XML/T*/*.xml";
+/*
+TODO , normalize all traditional and variants to simplified Chinese
+*/
+var taisho="/CBReader/XML/T*/*.xml";//T01n0001_001
 var tei=require("ksana-document").tei;
+var juanstart=0;
+var njuan=0;
+var filename2sutrano=function(fn) {
+	var m=fn.match(/n(.*?)_/);
+	if (m) return m[1];
+}
+var do_juan=function(text,tag,attributes,status) {
+	/*
+	   index strategy
+	   check uniqueness 
+	   find tag by name
+	   find attr=value
+	   return[  [ tag , voff ] ]
+
+	*/
+	if (attributes["fun"]=="open") {
+		njuan++;
+		var sutrano=filename2sutrano(status.filename) || "?";
+		return [
+			{path:["juan","text"], value:text  }
+			,{path:["juan","no"], value: sutrano+"."+attributes["n"] }
+			,{path:["sutra",sutrano,"juan"], value:[attributes["n"] ,njuan]   }
+		]
+	}
+	return null;
+}
+
+
+var captureTags={
+	//"cb:juan":do_juan,"/cb:juan":do_juanend
+	"cb:juan":do_juan,
+};
 
 var beforebodystart=function(s,status) {
 }
@@ -11,14 +46,9 @@ var afterbodyend=function(s,status) {
 var warning=function() {
 	console.log.apply(console,arguments);
 }
-var outback = function (s) {
-    while (s.length < 70) s += ' ';
-    var l = s.length; 
-    for (var i = 0; i < l; i++) s += String.fromCharCode(8);
-    process.stdout.write(s);
-}
+
 var onFile=function(fn) {
-	outback("indexing"+fn);
+	process.stdout.write("indexing "+fn+"\033[0G");
 }
 var initialize=function() {
 	this.addHandler(  "TEI/text/back/cb:div/p/note", require("./note"));
@@ -36,12 +66,13 @@ var config={
 	,glob:taisho
 	,pageSeparator:"pb.xml:id"
 	,format:"TEIP5"
-	, bodystart: "<body>"
-	, bodyend : "</body>"
+	,bodystart: "<body>"
+	,bodyend : "</body>"
 	,reset:true
 	,initialize:initialize
 	,finalized:finalized
 	,warning:warning
+	,captureTags:captureTags
 	,callbacks: {
 		beforebodystart:beforebodystart
 		,afterbodyend:afterbodyend

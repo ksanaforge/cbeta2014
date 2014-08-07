@@ -70,11 +70,10 @@ var main = React.createClass({
     }
   }, 
   onReady:function(usage,quota) {
-    this.setState({quota:quota,usage:usage});
-    if (!this.state.db) Kde.openLocal("cbeta.kdb",function(db){
+    if (!this.state.db) Kde.open("cbeta",function(db){
         this.setState({db:db});  
     },this);      
-    this.setState({dialog:false});
+    this.setState({dialog:false,quota:quota,usage:usage});
   },
   openFileinstaller:function(autoclose) {
     return <fileinstaller quota="512M" autoclose={autoclose} needed={require_kdb} 
