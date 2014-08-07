@@ -76,6 +76,9 @@ var main = React.createClass({
     this.setState({dialog:false,quota:quota,usage:usage});
   },
   openFileinstaller:function(autoclose) {
+    if (window.location.origin.indexOf("http://127.0.0.1")==0) {
+      require_kdb[0].url=window.location.origin+"/cbeta.kdb";
+    }
     return <fileinstaller quota="512M" autoclose={autoclose} needed={require_kdb} 
                      onReady={this.onReady}/>
   },
