@@ -10,14 +10,6 @@ var filename2sutrano=function(fn) {
 	if (m) return m[1];
 }
 var do_juan=function(text,tag,attributes,status) {
-	/*
-	   index strategy
-	   check uniqueness 
-	   find tag by name
-	   find attr=value
-	   return[  [ tag , voff ] ]
-
-	*/
 	if (attributes["fun"]=="open") {
 		njuan++;
 		var sutrano=filename2sutrano(status.filename) || "?";
@@ -50,7 +42,7 @@ var warning=function() {
 var onFile=function(fn) {
 	process.stdout.write("indexing "+fn+"\033[0G");
 }
-var initialize=function() {
+var setupHandlers=function() {
 	this.addHandler(  "TEI/text/back/cb:div/p/note", require("./note"));
 	this.addHandler(  "TEI/text/back/cb:div/p/app", require("./apparatus"));
 	this.addHandler(  "TEI/text/back/cb:div/p/choice", require("./choice"));
@@ -60,17 +52,21 @@ var finalized=function(session) {
 	console.log("VPOS",session.vpos);
 	console.log("FINISHED")
 }
+var finalizeField=function(fields) {
+
+}
 var config={
 	name:"cbeta"
 	,config:"simple1"
 	,glob:taisho
-	,pageSeparator:"pb.xml:id"
+	,pageSeparator:"pb.n"
 	,format:"TEIP5"
 	,bodystart: "<body>"
 	,bodyend : "</body>"
 	,reset:true
-	,initialize:initialize
+	,setupHandlers:setupHandlers
 	,finalized:finalized
+	,finalizeField:finalizeField
 	,warning:warning
 	,captureTags:captureTags
 	,callbacks: {
