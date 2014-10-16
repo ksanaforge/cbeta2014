@@ -1,11 +1,15 @@
 var app=null,rdg=null,childrdg=null,childapp=null;  //<app> apparatus
 var apps=[];
+/*
+TODO 
+  nested app can have lem and rdg
 
+*/
 var resolve=function(anchors,texts) { //resolve app and cb:tt
 	var froms={};
 	apps.map(function(A,idx){ 
 		if (!A.from) {
-			API.warning("no 'from' in "+JSON.stringify(A));
+			API.warning("APP error, no 'from' in "+JSON.stringify(A));
 			return;
 		} 
 		if (froms[A.from]) {
@@ -36,20 +40,22 @@ var resolve=function(anchors,texts) { //resolve app and cb:tt
 var beforenote="";
 var handler=function(root) {
 	var node=this.now.name;
-	if (node=="app") {
+	if (root) {
 		var from=this.now.attributes.from;
 		if (from) from=from.substr(1);
-		if (root) app={lemma:"",rdg:[],from:from};
-		else 	childapp={lemma:"",rdg:[]};
-	}else if (node=="rdg") {
-		if (childapp)childrdg={text:"",wit: this.now.attributes.wit };
-		else rdg={text:"",wit: this.now.attributes.wit };
-	} else if (node=="note") {
-		beforenote=this.text;
+		app={lemma:"",rdg:[],from:from};
 	} else {
+		if (node=="app") {		
+				childapp={lemma:"",rdg:[] , from: app.from};//reuse parent from
+		}else if (node=="rdg") {
+			if (childapp)childrdg={text:"",wit: this.now.attributes.wit };
+			else rdg={text:"",wit: this.now.attributes.wit };
+		} else if (node=="note") {
+			beforenote=this.text;
+		} else {
 		//console.log("unknown tag",this.now.name);
+		}
 	}
-
 }
 
 
@@ -78,8 +84,10 @@ var close_handler=function(root) {
 			childrdg.text=this.text;
 			childapp.rdg.push(childrdg);
 		} else {
-			rdg.text=this.text;
-			app.rdg.push(rdg);
+			if (rdg) {
+				rdg.text=this.text;
+				app.rdg.push(rdg);
+			}
 		}
 		this.text="";
 	}

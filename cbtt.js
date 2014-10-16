@@ -5,10 +5,10 @@ var resolve=function(anchors,texts) { //resolve app and cb:tt
 	var froms={};
 	cbtts.map(function(A,idx){ 
 		if (!A.from) {
-			warn("no 'from' in "+JSON.stringify(A));
+			API.warning("CBTT error, no 'from' in "+JSON.stringify(A));
 			return;
 		} 
-		if (froms[A.from]) warn("repeat id "+A.from);
+		if (froms[A.from]) API.warning("repeat id "+A.from);
 		froms[A.from]=idx+1;
 	});
 
@@ -63,7 +63,10 @@ var close_handler=function(root) {
 		} else if (node=="app") {
 			this.parentHandler=null;
 			this.parentCloseHandler=null;
-			if (!this.app) debugger;
+			if (typeof this.app=="undefined") {
+				
+					return;
+			}
 			this.text+=this.app.lemma;
 			this.app=null;
 			this.handler=handler;

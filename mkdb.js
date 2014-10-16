@@ -32,7 +32,7 @@ var beforebodystart=function(s,status) {
 }
 var afterbodyend=function(s,status) {
 	//status has parsed body text and raw body text, raw start text
-	var apps=tei(status.starttext+s,status.parsed,status.filename,config);
+	var apps=tei(status.starttext+s,status.parsed,status.filename,config,status);
 	//console.log(apps)
 }
 var warning=function() {
@@ -43,10 +43,10 @@ var onFile=function(fn) {
 	process.stdout.write("indexing "+fn+"\033[0G");
 }
 var setupHandlers=function() {
-	this.addHandler(  "TEI/text/back/cb:div/p/note", require("./note"));
-	this.addHandler(  "TEI/text/back/cb:div/p/app", require("./apparatus"));
-	this.addHandler(  "TEI/text/back/cb:div/p/choice", require("./choice"));
-	this.addHandler(  "TEI/text/back/cb:div/p/cb:tt", require("./cbtt"));
+	this.addHandler("cb:div/p/note", require("./note"));
+	this.addHandler("cb:div/p/app", require("./apparatus"));
+	this.addHandler("cb:div/p/choice", require("./choice"));
+	this.addHandler("cb:div/p/cb:tt", require("./cbtt"));
 }
 var finalized=function(session) {
 	console.log("VPOS",session.vpos);
@@ -55,9 +55,17 @@ var finalized=function(session) {
 var finalizeField=function(fields) {
 
 }
+var beforeParseTag=function(xml) {
+	var back=xml.indexOf("<back>");
+	xml=xml.substr(back);
+	xml=xml.replace("</text></TEI>","");
+	return xml;
+}
 var config={
 	name:"cbeta"
-	,config:"simple1"
+	,meta:{
+		config:"simple1"	
+	}
 	,glob:taisho
 	,pageSeparator:"pb.n"
 	,format:"TEIP5"
@@ -73,6 +81,7 @@ var config={
 		beforebodystart:beforebodystart
 		,afterbodyend:afterbodyend
 		,onFile:onFile
+		,beforeParseTag:beforeParseTag
 	}
 }
 setTimeout(function(){ //this might load by gulpfile-app.js

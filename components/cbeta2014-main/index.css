@@ -1,4 +1,5 @@
-.main {height:100%;line-height: 120%;overflow-y:auto;}
+.main {font-size:200%;height:100%;line-height: 120%;overflow-y:auto;}
+.inputs {width:100%;}
 hl {color:red;}
 hl[n="0"] {color:blue;}
 .row {
@@ -8,3 +9,5 @@ hl[n="0"] {color:blue;}
    padding: 0 !important;
    margin: 0 !important;
 }
+
+.logo {width:100%;}
