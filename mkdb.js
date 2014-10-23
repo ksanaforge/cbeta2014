@@ -50,12 +50,13 @@ var setupHandlers=function() {
 }
 var finalized=function(session) {
 	console.log("VPOS",session.vpos);
-	console.log("FINISHED")
+	console.log("FINISHED");
 }
 var finalizeField=function(fields) {
 
 }
 var beforeParseTag=function(xml) {
+	//make <back> as root node
 	var back=xml.indexOf("<back>");
 	xml=xml.substr(back);
 	xml=xml.replace("</text></TEI>","");
@@ -68,7 +69,7 @@ var config={
 	}
 	,glob:taisho
 	,pageSeparator:"pb.n"
-	,format:"TEIP5"
+	,format:"TEI-P5"
 	,bodystart: "<body>"
 	,bodyend : "</body>"
 	,reset:true
