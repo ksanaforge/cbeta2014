@@ -1,13 +1,11 @@
-.main {font-size:200%;height:100%;line-height: 120%;overflow-y:auto;}
-.inputs {width:100%;}
+.main {position:relative;}
 hl {color:red;}
-hl[n="0"] {color:blue;}
-.row {
-    width:99.99%;
-}
-.nopadding {
-   padding: 0 !important;
-   margin: 0 !important;
-}
+.inputs {font-size:150%;}
+.resultitem  {font-size:125%;}
+.swipediv {border-width:1px;border-color:silver;border-radius: 10px;border-style:solid;}
 
-.logo {width:100%;}
+
+@media 
+(-webkit-min-device-pixel-ratio: 2) and (min-width: 1500px){ 
+	.resultitem{font-size:200%;}
+}

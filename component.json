@@ -9,13 +9,15 @@
     "brighthas/bootstrap": "*",
     "ksana/document": "*",
     "cbeta2014/main": "*",
-    "cbeta2014/comp1": "*",
     "cbeta2014/showtext": "*",
     "ksanaforge/fileinstaller":"*",
     "ksanaforge/checkbrowser":"*",
     "ksanaforge/htmlfs":"*",
     "ksanaforge/swipe":"*",
-    "ksanaforge/stacktoc":"*"
+    "ksanaforge/stacktoc":"*",
+    "ksanaforge/defaultmain":"*",
+    "ksanaforge/defaultresultlist":"*",
+    "ksanaforge/defaultshowtext":"*"
   },
   "development": {},
   "paths": [
