@@ -66,9 +66,13 @@ var summary=function(opts){
 	require("fs").writeFileSync("bigram.txt",bigramarr.join("\n"),"utf8");	
 
 	bigramarr=bigramarr.filter(function(b){return b[3]<opts.maxrate});
-	require("fs").writeFileSync("bigramchoosen.txt",bigramarr.join("\n"),"utf8");	
-
 	report(bigramarr);
+	bigramarr=bigramarr.map(function(b){return b[0]});
+	bigramarr.sort(function(a,b){return a>b?1:b>a?-1:0});
+
+	require("fs").writeFileSync("bigram.json",JSON.stringify(bigramarr),"utf8");	
+
+
 }
 var dump=function(db) {
 	db.get(["fileContents"],{recursive:true},function(data){
@@ -77,7 +81,7 @@ var dump=function(db) {
 		dopages(data);
 		console.timeEnd("bigram")
 		console.time("summary");
-		summary({min:2000,maxrate:0.05});
+		summary({min:3000,maxrate:0.5});
 		console.timeEnd("summary");
 
 	});

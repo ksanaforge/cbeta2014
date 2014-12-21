@@ -131,6 +131,12 @@ var finalized=function(session) {
 var finalizeField=function(fields) {
 
 }
+var loadBigram=function() {
+	var fs=require("fs");
+	if (fs.existsSync("bigram.json")){
+		return JSON.parse(fs.readFileSync("bigram.json","utf8"));
+	} else return [];
+}
 var beforeParseTag=function(xml) {
 	//make <back> as root node
 	var back=xml.indexOf("<back>");
@@ -142,6 +148,7 @@ var config={
 	name:"cbeta"
 	,meta:{
 		config:"simple1"	
+		,bigram:loadBigram()
 	}
 	,glob:taisho
 	,pageSeparator:"pb.n"
