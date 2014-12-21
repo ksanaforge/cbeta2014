@@ -33,10 +33,9 @@ var do_juan=function(text,tag,attributes,status) {
 
 var folder2name=require("./foldername");
 
-var folder=0,lastfolder=0,newfolder=0;
+var folder=0,lastfolder=0,newfolder=1;
 var extramulu=function(vpos) {
 	var res=[];
-
 	if (newfolder>0) {
 		for (var i=0;i<folder2name.length;i++){
 			var toc=folder2name[i];
@@ -101,7 +100,11 @@ var afterbodyend=function(s,status) {
 }
 
 var getFolder=function(fn) {
-	var idx=fn.lastIndexOf("/");
+	var idx=fn.lastIndexOf(require("path").sep);
+	if (idx==-1) {
+		idx=fn.lastIndexOf("/");
+	}
+	if (idx==-1) return 0;
 	folder=parseInt(fn.substr(idx+2,2));
 	return folder;
 }
@@ -110,6 +113,7 @@ var warning=function() {
 }
 
 var onFile=function(fn) {
+
 	var folder=getFolder(fn);
 	if (folder!=lastfolder) {
 		newfolder=folder;
