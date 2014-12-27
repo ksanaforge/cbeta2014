@@ -1,0 +1,12 @@
+{
+  "name": "dfb",
+  "repo": "cbeta2014/dfb",
+  "description": "hello world",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": ["index.js","entries.js"]
+}

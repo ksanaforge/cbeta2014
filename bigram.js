@@ -54,7 +54,9 @@ var summary=function(opts){
 	for (var i in bigram) {
 		var hit=getunigramhit(i);
 		var r=bigram[i]/hit;
-		bigramarr.push([i,bigram[i], hit ,r]);
+		bigramarr.push([i,bigram[i], 
+		 unigram[i.charCodeAt(0)-0x4e00],
+	     unigram[i.charCodeAt(1)-0x4e00],r]);
 	}
 
 	console.log("sorting")
@@ -65,7 +67,7 @@ var summary=function(opts){
 	console.log("writing")
 	require("fs").writeFileSync("bigram.txt",bigramarr.join("\n"),"utf8");	
 
-	bigramarr=bigramarr.filter(function(b){return b[3]<opts.maxrate});
+	bigramarr=bigramarr.filter(function(b){return b[4]<opts.maxrate});
 	report(bigramarr);
 	bigramarr=bigramarr.map(function(b){return b[0]});
 	bigramarr.sort(function(a,b){return a>b?1:b>a?-1:0});
