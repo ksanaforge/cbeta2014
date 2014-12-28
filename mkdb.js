@@ -7,7 +7,7 @@ mulu level 4~level8
 
 repeat beg0639002
 */
-var taisho="/CBReader/XML/T*/*.xml";//T01n0001_001
+var taisho="/CBReader/XML/T01/*.xml";//T01n0001_001
 var tei=require("ksana-document").tei;
 var juannow=0,njuan=0,title="";
 var filename2sutrano=function(fn) {
@@ -135,6 +135,12 @@ var finalized=function(session) {
 var finalizeField=function(fields) {
 
 }
+var loadToSim=function() {
+	var fs=require("fs");
+	if (fs.existsSync("tosim.json")){
+		return JSON.parse(fs.readFileSync("tosim.json","utf8"));
+	} else return [];	
+}
 var loadBigram=function() {
 	var fs=require("fs");
 	if (fs.existsSync("bigram.json")){
@@ -148,11 +154,13 @@ var beforeParseTag=function(xml) {
 	xml=xml.replace("</text></TEI>","");
 	return xml;
 }
+
 var config={
 	name:"cbeta"
 	,meta:{
 		config:"simple1"	
 		,bigram:loadBigram()
+		,normalize:loadToSim()
 	}
 	,glob:taisho
 	,pageSeparator:"pb.n"
